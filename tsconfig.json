@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "module": "es6",
+      "moduleResolution": "node",
+      "noImplicitAny": false,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "outDir": "dist",
+      "jsx": "react",
+    },
+    "include": [
+        "src/"
+    ]
+  }
