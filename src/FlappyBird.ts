@@ -21,10 +21,10 @@ export default class FlappyBird implements I2DCanvasSprite {
         this.canvas = canvas;
         this.context = this.canvas.getContext('2d');
         this.position = {
-            x: canvas.width / 2, 
+            x: canvas.width / 5, 
             y: canvas.height / 2
         };
-        this.vy = 0;
+        this.vy = 0; 
 
         let flappy1Image = new Image();
         flappy1Image.src = flappy1ImageSrc;

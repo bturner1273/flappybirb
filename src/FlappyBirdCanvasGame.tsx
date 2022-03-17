@@ -16,6 +16,7 @@ const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         context = canvasRef.current.getContext('2d');
+        context.strokeStyle = 'red';
         flappyBird = new FlappyBird(canvasRef.current);
         let pipeSet = new PipeSet(canvasRef.current, 100);
         const sprites: Array<I2DCanvasSprite> = [flappyBird, pipeSet];
@@ -30,10 +31,7 @@ const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
             sprites.forEach(s => {
                 if (s.hitBox && debug) {
                     const { anchor, height, width } = s.hitBox;
-                    context.save();
-                    context.strokeStyle = 'red';
                     context.strokeRect(anchor.x, anchor.y, width, height);
-                    context.restore();
                 }
 
                 s.update();

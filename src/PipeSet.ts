@@ -8,6 +8,7 @@ export default class PipeSet implements I2DCanvasSprite {
     readonly canvas: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
     position: Point2D;
+    hitBoxPosition: Point2D;
     vx: number;
     hitBox: HitBox2D;
     private readonly topPipeImage: HTMLImageElement; 
@@ -17,23 +18,28 @@ export default class PipeSet implements I2DCanvasSprite {
         this.canvas = canvas;
         this.context =  canvas.getContext('2d');
         this.position = {
-            x: 450,
+            x: 200,
             y: y
         };
-        this.vx = Constants.PIPE_SPEED
+        this.vx = /*Constants.PIPE_SPEED*/0;
         this.topPipeImage = new Image();
         this.topPipeImage.src = topPipeImageSrc;
         this.bottomPipeImage = new Image();
         this.bottomPipeImage.src = bottomPipeImageSrc;
+        this.hitBoxPosition = {
+            x: this.position.x,
+            y: this.position.y + 75
+        };
         this.hitBox = {
-            anchor: {x: this.position.x, y: 200},
-            height: 380,
-            width: 300
+            anchor: this.hitBoxPosition,
+            height: 115,
+            width: this.topPipeImage.width
         }
     }
     
     update = () => {
         this.position.x -= this.vx;
+        this.hitBoxPosition.x -= this.vx;
     }
 
     draw = () => {
