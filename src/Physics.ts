@@ -19,7 +19,14 @@ export default class Physics {
         e.vy += Constants.G;
     }
 
-    static colliding = (hitBox: HitBox2D, otherHitBox: HitBox2D): boolean => {
+    static colliding = (sprite: I2DCanvasSprite, otherSprite: I2DCanvasSprite): boolean => {
+        if (sprite.hitBox && otherSprite.hitBox) {
+            return this.hitBoxColliding(sprite.hitBox, otherSprite.hitBox);
+        }
+        return false;
+    }
+    
+    static hitBoxColliding = (hitBox: HitBox2D, otherHitBox: HitBox2D): boolean => {
         if (hitBox.anchor.x < otherHitBox.anchor.x + otherHitBox.width &&
             hitBox.anchor.x + hitBox.width > otherHitBox.anchor.x &&
             hitBox.anchor.y < otherHitBox.anchor.y + otherHitBox.height &&
