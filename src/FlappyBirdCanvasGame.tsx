@@ -29,7 +29,6 @@ const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
             );
             sprites.forEach(s => {
                 if (s.hitBox && debug) {
-                    console.log('drawing hitbox');
                     const { anchor, height, width } = s.hitBox;
                     context.save();
                     context.strokeStyle = 'red';
