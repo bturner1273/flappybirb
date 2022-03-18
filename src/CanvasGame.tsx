@@ -85,6 +85,8 @@ const CanvasGame: React.FC = (): JSX.Element => {
                             -60
                         )
                 )
+                //this should take a lambda that accepts
+                //the sprite the animation is attached to
                 .withAnimation(
                     new CanvasSprite2DFrameAnimation([
                         {
