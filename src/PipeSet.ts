@@ -1,10 +1,10 @@
 import Constants from "./Constants";
 import topPipeImageSrc from "../images/top_pipe.png";
 import bottomPipeImageSrc from "../images/bottom_pipe.png";
-import I2DCanvasSprite from "./I2DCanvasSprite";
+import CanvasSprite2D from "./CanvasSprite2D";
 import { CompositeHitBox2D, HitBox2D, Point2D } from "./Physics";
 
-export default class PipeSet implements I2DCanvasSprite {
+/*export default class PipeSet implements CanvasSprite2D {
     readonly canvas: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
     position: Point2D;
@@ -15,6 +15,7 @@ export default class PipeSet implements I2DCanvasSprite {
     compositeHitBox: CompositeHitBox2D;
     private readonly topPipeImage: HTMLImageElement; 
     private readonly bottomPipeImage: HTMLImageElement;
+    hasGravity: boolean = false;
 
     constructor(canvas: HTMLCanvasElement, y: number) {
         this.canvas = canvas;
@@ -24,11 +25,11 @@ export default class PipeSet implements I2DCanvasSprite {
             y: y
         };
         this.vx = Constants.PIPE_SPEED;
+        
         this.topPipeImage = new Image();
         this.topPipeImage.src = topPipeImageSrc;
         this.bottomPipeImage = new Image();
         this.bottomPipeImage.src = bottomPipeImageSrc;
-
 
         this.topPipeHitBoxPosition = {
             x: this.position.x,
@@ -42,30 +43,25 @@ export default class PipeSet implements I2DCanvasSprite {
             x: this.position.x,
             y: this.position.y + Constants.PIPE_Y_OFFSET
         }
-
-
-        this.compositeHitBox = {
-            hitBoxes: new Map([
+        this.compositeHitBox = new Map<string, HitBox2D>([
                 ['topPipeHitBox', {
-                    anchor: this.topPipeHitBoxPosition,
+                    offset: this.topPipeHitBoxPosition,
                     height: Constants.PIPE_HEIGHT,
-                    width: Constants.PIPE_SPEED,
-                    drawColor: 'blue'
+                    width: 3,
+                    drawColor: 'black'
                 }],
                 ['goalHitBox', {
-                    anchor: this.goalHitBoxPosition,
-                    height: (this.position.y + Constants.PIPE_Y_OFFSET) - (this.position.y - Constants.PIPE_Y_OFFSET),
-                    width: Constants.PIPE_SPEED
+                    offset: this.goalHitBoxPosition,
+                    height: Constants.GOAL_HEIGHT,
+                    width: 3
                 }],
                 ['bottomPipeHitBox', {
-                    anchor: this.bottomPipeHitBoxPosition,
+                    offset: this.bottomPipeHitBoxPosition,
                     height: Constants.PIPE_HEIGHT,
-                    width: Constants.PIPE_SPEED,
+                    width: 3,
                     drawColor: 'black'
                 }]
-            ])
-        }
-
+            ]);
     }
     
     update = () => {
@@ -79,4 +75,4 @@ export default class PipeSet implements I2DCanvasSprite {
         this.context.drawImage(this.topPipeImage, this.position.x, this.position.y + Constants.PIPE_Y_OFFSET);
         this.context.drawImage(this.bottomPipeImage, this.position.x, this.position.y - Constants.PIPE_Y_OFFSET);
     }
-}
+}*/

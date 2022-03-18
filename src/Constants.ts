@@ -7,4 +7,5 @@ export default class Constants {
     static readonly PIPE_HEIGHT = 266;
     static readonly FLAPPY_WIDTH = 32;
     static readonly FLAPPY_HEIGHT = 24;
+    static readonly GOAL_HEIGHT = 115;
 }

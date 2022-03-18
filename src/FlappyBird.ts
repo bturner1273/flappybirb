@@ -2,24 +2,27 @@ import flappy1ImageSrc from '../images/flappy_1.png';
 import flappy2ImageSrc from '../images/flappy_2.png';
 import flappy3ImageSrc from '../images/flappy_3.png';
 import Constants from './Constants';
-import I2DCanvasSprite from './I2DCanvasSprite';
+import CanvasSprite2D from './CanvasSprite2D';
 import MathUtils from './MathUtils';
 import Physics, { HitBox2D, Point2D } from './Physics';
 
-export default class FlappyBird implements I2DCanvasSprite {
+/*export default class FlappyBird implements CanvasSprite2D {
     readonly canvas: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
     position: Point2D;
     vy: number;
     hitBox: HitBox2D;
+    hitBoxPosition: Point2D;
     private previousAnimationUpdate: number;
     private readonly flapAnimationIntervalMs = 50;
     private readonly flapAnimationFrames: Array<HTMLImageElement>;
     private currentAnimationFrameIndex: number;
+    hasGravity: boolean = true;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.context = this.canvas.getContext('2d');
+        
         this.position = {
             x: canvas.width / 5, 
             y: canvas.height / 2
@@ -35,10 +38,15 @@ export default class FlappyBird implements I2DCanvasSprite {
         this.flapAnimationFrames = [flappy1Image, flappy2Image, flappy3Image];
         this.currentAnimationFrameIndex = 0;
         this.previousAnimationUpdate = Date.now();
+        
+        this.hitBoxPosition = {
+            x: this.position.x + Constants.FLAPPY_WIDTH - Constants.PIPE_SPEED,
+            y: this.position.y
+        }
         this.hitBox = {
-            anchor: this.position,
-            width: Constants.PIPE_SPEED,
-            height: Constants.FLAPPY_HEIGHT
+            offset: this.hitBoxPosition,
+            height: Constants.FLAPPY_HEIGHT,
+            width: 3
         }
 
         document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -50,13 +58,14 @@ export default class FlappyBird implements I2DCanvasSprite {
 
     update = () => {
         Physics.gravity(this);
+        this.hitBoxPosition.y = this.position.y;
 
         //handle animation
         if (
             Date.now() - this.previousAnimationUpdate >
             this.flapAnimationIntervalMs
         ) {
-            this.currentAnimationFrameIndex =
+            this.currentAnimationFrameIndex = 
                 this.currentAnimationFrameIndex <
                 this.flapAnimationFrames.length - 1
                     ? this.currentAnimationFrameIndex + 1
@@ -77,4 +86,4 @@ export default class FlappyBird implements I2DCanvasSprite {
         );
         this.context.restore();
     }
-}
+}*/

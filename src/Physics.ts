@@ -1,5 +1,5 @@
 import Constants from "./Constants";
-import I2DCanvasSprite from "./I2DCanvasSprite";
+import CanvasSprite2D from "./CanvasSprite2D";
 
 export type Point2D = {
     x: number;
@@ -7,35 +7,37 @@ export type Point2D = {
 }
 
 export type HitBox2D = {
-    anchor: Point2D;
+    offset?: Point2D;
     height: number;
     width: number;
     drawColor?: string;
 }
 
-export type CompositeHitBox2D = {
-    hitBoxes: Map<string, HitBox2D>
-}
+export type CompositeHitBox2D = Map<string, HitBox2D>;
 
 export type SpriteCollisionResult2D = {
     collisionDetected: boolean;
+    spriteTag: string;
     spriteHitBoxKey?: string;
+    otherSpriteTag: string;
     otherSpriteHitBoxKey?: string;
 }
 
 export default class Physics {
-    static gravity = (e: I2DCanvasSprite): void => {
+    static gravity = (e: CanvasSprite2D): void => {
         if (e.vy === null || typeof e.vy === 'undefined') console.error('[Physics::gravity]: cannot call gravity on I2DCanvasEntity that does not have vy');
         e.position.y += e.vy;
         e.vy += Constants.G;
     }
 
-    private static collidingHelper = (spriteHitBox: HitBox2D, otherSpriteCompositeHitBox: CompositeHitBox2D, shouldSetSpriteHitBoxKey: boolean = false): SpriteCollisionResult2D => {
+    private static collidingHelper = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D, shouldSetSpriteHitBoxKey: boolean = false): SpriteCollisionResult2D => {
         const result: SpriteCollisionResult2D = {
-            collisionDetected: false
+            collisionDetected: false,
+            spriteTag: shouldSetSpriteHitBoxKey ? otherSprite.tag : sprite.tag,
+            otherSpriteTag: shouldSetSpriteHitBoxKey ? sprite.tag : otherSprite.tag
         };
-        for (let key of Array.from(otherSpriteCompositeHitBox.hitBoxes.keys())) {
-            if (this.hitBoxColliding(spriteHitBox, otherSpriteCompositeHitBox.hitBoxes.get(key))) {
+        for (let key of Array.from(otherSprite.compositeHitBox.keys())) {
+            if (this.rectangleCollision(sprite.position, sprite.hitBox, otherSprite.position, otherSprite.compositeHitBox.get(key))) {
                 result.collisionDetected = true;
                 if (shouldSetSpriteHitBoxKey) { 
                     result.spriteHitBoxKey = key;
@@ -49,26 +51,30 @@ export default class Physics {
         return result;
     }
 
-    static colliding = (sprite: I2DCanvasSprite, otherSprite: I2DCanvasSprite): SpriteCollisionResult2D => {
+    static colliding = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D): SpriteCollisionResult2D => {
         let result: SpriteCollisionResult2D = {
-            collisionDetected: false
+            collisionDetected: false,
+            spriteTag: sprite.tag,
+            otherSpriteTag: otherSprite.tag
         };
         if (sprite.hitBox && otherSprite.hitBox) {
-            result.collisionDetected = this.hitBoxColliding(sprite.hitBox, otherSprite.hitBox); 
+            result.collisionDetected = this.rectangleCollision(sprite.position, sprite.hitBox, otherSprite.position, otherSprite.hitBox); 
         }
         else if (sprite.hitBox && otherSprite.compositeHitBox) {
-            result = this.collidingHelper(sprite.hitBox, otherSprite.compositeHitBox);
+            result = this.collidingHelper(sprite, otherSprite);
         }
         else if (sprite.compositeHitBox && otherSprite.hitBox) {
-            result = this.collidingHelper(otherSprite.hitBox, sprite.compositeHitBox, true);
+            result = this.collidingHelper(otherSprite, sprite, true);
         }
         else if (sprite.compositeHitBox && otherSprite.compositeHitBox) {
-            for (let spriteKey of Array.from(sprite.compositeHitBox.hitBoxes.keys())) {
-                for (let otherSpriteKey of Array.from(otherSprite.compositeHitBox.hitBoxes.keys())) {
-                    if (this.hitBoxColliding(sprite.compositeHitBox.hitBoxes.get(spriteKey), otherSprite.compositeHitBox.hitBoxes.get(otherSpriteKey))) {
+            for (let spriteKey of Array.from(sprite.compositeHitBox.keys())) {
+                for (let otherSpriteKey of Array.from(otherSprite.compositeHitBox.keys())) {
+                    if (this.rectangleCollision(sprite.position, sprite.compositeHitBox.get(spriteKey), otherSprite.position, otherSprite.compositeHitBox.get(otherSpriteKey))) {
                         result = {
                             collisionDetected: true,
+                            spriteTag: sprite.tag,
                             spriteHitBoxKey: spriteKey,
+                            otherSpriteTag: otherSprite.tag,
                             otherSpriteHitBoxKey: otherSpriteKey
                         }
                         break;
@@ -79,11 +85,11 @@ export default class Physics {
         return result;
     }
     
-    static hitBoxColliding = (hitBox: HitBox2D, otherHitBox: HitBox2D): boolean => {
-        if (hitBox.anchor.x < otherHitBox.anchor.x + otherHitBox.width &&
-            hitBox.anchor.x + hitBox.width > otherHitBox.anchor.x &&
-            hitBox.anchor.y < otherHitBox.anchor.y + otherHitBox.height &&
-            hitBox.anchor.y + hitBox.height > otherHitBox.anchor.y) { 
+    static rectangleCollision = (hitBoxPos: Point2D, hitBox: HitBox2D, otherHitBoxPos: Point2D, otherHitBox: HitBox2D): boolean => {
+        if (hitBoxPos.x < otherHitBoxPos.x + otherHitBox.width &&
+            hitBoxPos.x + hitBox.width > otherHitBoxPos.x &&
+            hitBoxPos.y < otherHitBoxPos.y + otherHitBox.height &&
+            hitBoxPos.y + hitBox.height > otherHitBoxPos.y) { 
             return true;
         }
         return false;
