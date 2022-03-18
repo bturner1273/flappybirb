@@ -7,6 +7,7 @@ import GroundImage from '../images/ground.png';
 import FlappyBird from './FlappyBird';
 import PipeSet from './PipeSet';
 import I2DCanvasSprite from './I2DCanvasSprite';
+import Physics, { SpriteCollisionResult2D } from './Physics';
 
 const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
     const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
@@ -14,9 +15,24 @@ const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
     let context: CanvasRenderingContext2D;
     const debug = true;
 
+    const drawSpriteHitBox = (s: I2DCanvasSprite): void => {
+        if (s.hitBox) {
+            const { anchor, height, width, drawColor } = s.hitBox;
+
+            context.strokeStyle = drawColor ?? 'red';
+            context.strokeRect(anchor.x, anchor.y, width, height);
+        } else if (s.compositeHitBox) {
+            for (let key of Array.from(s.compositeHitBox.hitBoxes.keys())) {
+                const { anchor, height, width, drawColor } =
+                    s.compositeHitBox.hitBoxes.get(key);
+                context.strokeStyle = drawColor ?? 'red';
+                context.strokeRect(anchor.x, anchor.y, width, height);
+            }
+        }
+    };
+
     useEffect(() => {
         context = canvasRef.current.getContext('2d');
-        context.strokeStyle = 'red';
         flappyBird = new FlappyBird(canvasRef.current);
         let pipeSet = new PipeSet(canvasRef.current, 100);
         const sprites: Array<I2DCanvasSprite> = [flappyBird, pipeSet];
@@ -29,14 +45,21 @@ const FlappyBirdCanvasGame: React.FC = (): JSX.Element => {
                 canvasRef.current.height
             );
             sprites.forEach(s => {
-                if (s.hitBox && debug) {
-                    const { anchor, height, width } = s.hitBox;
-                    context.strokeRect(anchor.x, anchor.y, width, height);
-                }
-
                 s.update();
+                if (debug) {
+                    drawSpriteHitBox(s);
+                }
                 s.draw();
             });
+
+            const collisionResult: SpriteCollisionResult2D = Physics.colliding(
+                flappyBird,
+                pipeSet
+            );
+            if (collisionResult.collisionDetected) {
+                console.log(collisionResult);
+            }
+
             requestAnimationFrame(gameLoop);
         };
         gameLoop();

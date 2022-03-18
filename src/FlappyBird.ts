@@ -37,8 +37,8 @@ export default class FlappyBird implements I2DCanvasSprite {
         this.previousAnimationUpdate = Date.now();
         this.hitBox = {
             anchor: this.position,
-            width: flappy1Image.width,
-            height: flappy1Image.height
+            width: Constants.PIPE_SPEED,
+            height: Constants.FLAPPY_HEIGHT
         }
 
         document.addEventListener('keydown', (e: KeyboardEvent) => {
