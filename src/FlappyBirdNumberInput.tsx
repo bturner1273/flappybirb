@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CanvasGame from './CanvasGame';
+import FlappyBirdGame from './FlappyBirdGame';
 
 export interface IFlappyBirdNumberInputProps {
     name?: string;
@@ -14,7 +14,7 @@ export const FlappyBirdNumberInput: React.FC<IFlappyBirdNumberInputProps> = ({
     return (
         <div>
             <input type='hidden' name={name} value={value}></input>
-            <CanvasGame></CanvasGame>
+            <FlappyBirdGame></FlappyBirdGame>
         </div>
     );
 };

@@ -1,11 +1,12 @@
 import CanvasSprite2D, { CanvasImageSourceWithOffset, RotationFunction } from "./CanvasSprite2D";
+import CanvasSprite2DComponent from "./CanvasSprite2DComponent";
 import CanvasSprite2DFrameAnimation from "./CanvasSprite2DFrameAnimation";
-import { CompositeHitBox2D, HitBox2D, Point2D } from "./Physics";
+import { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionResult2D } from "./Physics";
 
 export default class CanvasSprite2DBuilder {
     private sprite: CanvasSprite2D;
-    constructor(canvas) {
-        this.sprite = new CanvasSprite2D(canvas);
+    constructor() {
+        this.sprite = new CanvasSprite2D();
     }
 
     at = (position: Point2D) => {
@@ -30,14 +31,15 @@ export default class CanvasSprite2DBuilder {
         return this;
     }
 
-    withAnimation = (animation: CanvasSprite2DFrameAnimation) => {
+    withAnimation = (func: (sprite: CanvasSprite2D) => CanvasSprite2DFrameAnimation) => {
         if (this.sprite.image || this.sprite.compositeImage) throw new Error("Cannot add animation to sprite with pre-existing image/composite image");
-        this.sprite.animation = animation;
+        this.sprite.animation = func(this.sprite);
         return this;
     }
 
-    withGravity = () => {
+    withGravity = (gravitationConstant?: number) => {
         this.sprite.hasGravity = true;
+        this.sprite.gravitationConstant = gravitationConstant;
         this.sprite.vy = 0;
         return this;
     } 
@@ -84,5 +86,29 @@ export default class CanvasSprite2DBuilder {
         return this;
     }
 
-    build = (): CanvasSprite2D => this.sprite;
+    addComponent = (component: CanvasSprite2DComponent) => {
+        if (this.sprite.components) {
+            this.sprite.components.push(component);
+        }
+        else {
+            this.sprite.components = [component];
+        }
+        return this;
+    }
+
+    canCollideWith = (collidableTags: Array<string>) => {
+        this.sprite.collidableTags = collidableTags;
+        return this;
+    }
+
+    onCollision = (handler: (collisionEvent: SpriteCollisionResult2D) => void) => {
+        this.sprite.collisionHandler = handler;
+        return this;
+    }
+
+    build = (): CanvasSprite2D => {
+        let returnSprite = this.sprite;
+        this.sprite = new CanvasSprite2D();
+        return returnSprite;
+    } 
 }

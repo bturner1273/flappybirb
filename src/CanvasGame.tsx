@@ -1,14 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import CanvasSprite2D from './CanvasSprite2D';
-import CanvasSprite2DBuilder from './CanvasSprite2DBuilder';
-import CanvasSprite2DFrameAnimation from './CanvasSprite2DFrameAnimation';
-import Constants from './Constants';
-import MathUtils from './MathUtils';
-
-//test
-import flappy1ImageSrc from '../images/flappy_1.png';
-import flappy2ImageSrc from '../images/flappy_2.png';
-import flappy3ImageSrc from '../images/flappy_3.png';
+import Physics, { HitBox2D } from './Physics';
 
 interface ICanvasGameProps {
     sprites: Array<CanvasSprite2D>;
@@ -17,87 +9,42 @@ interface ICanvasGameProps {
     canvasHeight?: number;
 }
 
-const CanvasGame: React.FC = (): JSX.Element => {
+const CanvasGame: React.FC<ICanvasGameProps> = (
+    props: ICanvasGameProps
+): JSX.Element => {
     const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
     let context: CanvasRenderingContext2D;
-    const debug = true;
+    let sprites: Array<CanvasSprite2D> = props.sprites;
+    const debug = props.debug ?? false;
 
     const drawSpriteHitBox = (s: CanvasSprite2D): void => {
-        if (s.hitBox) {
-            const { offset, height, width, drawColor } = s.hitBox;
-            context.strokeStyle = drawColor ?? 'red';
+        const drawSpriteHitBoxHelper = ({
+            offset,
+            height,
+            width,
+            drawColor
+        }: HitBox2D) => {
+            drawColor = drawColor ?? 'red';
+            context.strokeStyle = drawColor;
             context.strokeRect(
                 s.position.x + (offset?.x ?? 0),
                 s.position.y + (offset?.y ?? 0),
                 width,
                 height
             );
+        };
+
+        if (s.hitBox) {
+            drawSpriteHitBoxHelper(s.hitBox);
         } else if (s.compositeHitBox) {
             for (let key of Array.from(s.compositeHitBox.keys())) {
-                const { offset, height, width, drawColor } =
-                    s.compositeHitBox.get(key);
-                context.strokeStyle = drawColor ?? 'red';
-                context.strokeRect(
-                    s.position.x + (offset?.x ?? 0),
-                    s.position.y + (offset?.y ?? 0),
-                    width,
-                    height
-                );
+                drawSpriteHitBoxHelper(s.compositeHitBox.get(key));
             }
         }
     };
 
     useEffect(() => {
         context = canvasRef.current.getContext('2d');
-        let flappy1Image = new Image();
-        flappy1Image.src = flappy1ImageSrc;
-        let flappy2Image = new Image();
-        flappy2Image.src = flappy2ImageSrc;
-        let flappy3Image = new Image();
-        flappy3Image.src = flappy3ImageSrc;
-        const sprites: Array<CanvasSprite2D> = [
-            new CanvasSprite2DBuilder(canvasRef.current)
-                .at({ x: 0, y: 200 })
-                .withTag('flappyBird')
-                .withGravity()
-                .withHitBox({
-                    offset: {
-                        x: Constants.FLAPPY_WIDTH - Constants.PIPE_SPEED,
-                        y: 0
-                    },
-                    height: Constants.FLAPPY_HEIGHT,
-                    width: 3
-                })
-                .withCustomControlHooks(flappy => {
-                    document.addEventListener('keydown', (e: KeyboardEvent) => {
-                        if (e.code === 'Space' || e.code === 'ArrowUp') {
-                            flappy.vy = Constants.FLAP_FORCE;
-                        }
-                    });
-                })
-                .withRotation(
-                    sprite =>
-                        -MathUtils.rangeMap(
-                            sprite.vy,
-                            Constants.FLAP_FORCE,
-                            20,
-                            60,
-                            -60
-                        )
-                )
-                //this should take a lambda that accepts
-                //the sprite the animation is attached to
-                .withAnimation(
-                    new CanvasSprite2DFrameAnimation([
-                        {
-                            isActiveAnimation: () => true,
-                            images: [flappy1Image, flappy2Image, flappy3Image],
-                            duration: 300
-                        }
-                    ])
-                )
-                .build()
-        ];
         const gameLoop = () => {
             context.clearRect(
                 0,
@@ -105,14 +52,30 @@ const CanvasGame: React.FC = (): JSX.Element => {
                 canvasRef.current.width,
                 canvasRef.current.height
             );
-            sprites.forEach(s => {
-                s.update();
-                //check for collisions if this sprite has a hitbox/composite hitbox
-                if (debug) {
-                    drawSpriteHitBox(s);
-                }
-                s.draw();
-            });
+
+            sprites
+                /*TODO: need to figure out how to actually remove these extra entities*/
+                .filter(s => !s.shouldCull)
+                .forEach(s => {
+                    s.update();
+                    if (s.collidableTags) {
+                        sprites.forEach(_s => {
+                            if (s !== _s && s.collidableTags.includes(_s.tag)) {
+                                const collisionResult = Physics.colliding(
+                                    s,
+                                    _s
+                                );
+                                if (collisionResult.collisionDetected) {
+                                    s._collisionDetected(collisionResult);
+                                }
+                            }
+                        });
+                    }
+                    if (debug) {
+                        drawSpriteHitBox(s);
+                    }
+                    s.draw(context);
+                });
             requestAnimationFrame(gameLoop);
         };
         gameLoop();
@@ -120,7 +83,11 @@ const CanvasGame: React.FC = (): JSX.Element => {
 
     return (
         <div>
-            <canvas ref={canvasRef} height={400} width={400}></canvas>
+            <canvas
+                ref={canvasRef}
+                height={props.canvasHeight ?? 400}
+                width={props.canvasWidth ?? 400}
+            ></canvas>
         </div>
     );
 };

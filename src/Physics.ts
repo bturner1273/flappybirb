@@ -21,23 +21,41 @@ export type SpriteCollisionResult2D = {
     spriteHitBoxKey?: string;
     otherSpriteTag: string;
     otherSpriteHitBoxKey?: string;
+    sprite: CanvasSprite2D;
+    otherSprite: CanvasSprite2D;
 }
 
+export const addPositions = (position: Point2D, offset: Point2D): Point2D => {
+    return { x: position.x + offset.x, y: position.y + offset.y };
+}
+
+const defaultOffset: Point2D = {x: 0, y: 0};
+
 export default class Physics {
-    static gravity = (e: CanvasSprite2D): void => {
+    static gravity = (e: CanvasSprite2D, g?: number): void => {
         if (e.vy === null || typeof e.vy === 'undefined') console.error('[Physics::gravity]: cannot call gravity on I2DCanvasEntity that does not have vy');
         e.position.y += e.vy;
-        e.vy += Constants.G;
+        e.vy += g ?? Constants.G;
     }
 
     private static collidingHelper = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D, shouldSetSpriteHitBoxKey: boolean = false): SpriteCollisionResult2D => {
         const result: SpriteCollisionResult2D = {
             collisionDetected: false,
             spriteTag: shouldSetSpriteHitBoxKey ? otherSprite.tag : sprite.tag,
-            otherSpriteTag: shouldSetSpriteHitBoxKey ? sprite.tag : otherSprite.tag
+            otherSpriteTag: shouldSetSpriteHitBoxKey ? sprite.tag : otherSprite.tag,
+            sprite: sprite,
+            otherSprite: otherSprite
         };
         for (let key of Array.from(otherSprite.compositeHitBox.keys())) {
-            if (this.rectangleCollision(sprite.position, sprite.hitBox, otherSprite.position, otherSprite.compositeHitBox.get(key))) {
+            let otherSpriteHitBox = otherSprite.compositeHitBox.get(key);
+            if (
+                    this.rectangleCollision(
+                        addPositions(sprite.position, sprite.hitBox.offset ?? defaultOffset), 
+                        sprite.hitBox, 
+                        addPositions(otherSprite.position, otherSpriteHitBox.offset ?? defaultOffset), 
+                        otherSpriteHitBox
+                    )
+                ) {
                 result.collisionDetected = true;
                 if (shouldSetSpriteHitBoxKey) { 
                     result.spriteHitBoxKey = key;
@@ -51,11 +69,14 @@ export default class Physics {
         return result;
     }
 
+    //not using correct hitbox positions, need to consider offsets lol
     static colliding = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D): SpriteCollisionResult2D => {
         let result: SpriteCollisionResult2D = {
             collisionDetected: false,
             spriteTag: sprite.tag,
-            otherSpriteTag: otherSprite.tag
+            otherSpriteTag: otherSprite.tag,
+            sprite: sprite,
+            otherSprite: otherSprite
         };
         if (sprite.hitBox && otherSprite.hitBox) {
             result.collisionDetected = this.rectangleCollision(sprite.position, sprite.hitBox, otherSprite.position, otherSprite.hitBox); 
@@ -75,7 +96,9 @@ export default class Physics {
                             spriteTag: sprite.tag,
                             spriteHitBoxKey: spriteKey,
                             otherSpriteTag: otherSprite.tag,
-                            otherSpriteHitBoxKey: otherSpriteKey
+                            otherSpriteHitBoxKey: otherSpriteKey,
+                            sprite: sprite,
+                            otherSprite: otherSprite
                         }
                         break;
                     }
