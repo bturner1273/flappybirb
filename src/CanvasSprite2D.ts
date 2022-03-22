@@ -2,7 +2,7 @@ import CanvasSprite2DComponent from "./CanvasSprite2DComponent";
 import CanvasSprite2DFrameAnimation from "./CanvasSprite2DFrameAnimation";
 import Constants from "./Constants";
 import IUpdateEveryFrame from "./IUpdateEveryFrame";
-import Physics, { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionResult2D } from "./Physics";
+import Physics, { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionEvent2D } from "./Physics";
 
 export type RotationFunction = (sprite: CanvasSprite2D) => number;
 export type CanvasImageSourceWithOffset = {
@@ -28,11 +28,11 @@ export default class CanvasSprite2D implements IUpdateEveryFrame {
     gravitationConstant?: number;
     components?: Array<CanvasSprite2DComponent>;
     collidableTags?: Array<string>;
-    collisionHandler?: (collisionEvent: SpriteCollisionResult2D) => void;
+    collisionHandler?: (sprite: CanvasSprite2D, collisionEvent: SpriteCollisionEvent2D) => void;
     shouldCull: boolean = false;
 
-    _collisionDetected = (collisionEvent: SpriteCollisionResult2D) => {
-        this.collisionHandler?.(collisionEvent);
+    _collisionDetected = (collisionEvent: SpriteCollisionEvent2D) => {
+        this.collisionHandler?.(this, collisionEvent);
     }
 
     update = () => {

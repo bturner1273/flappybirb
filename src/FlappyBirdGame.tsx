@@ -52,8 +52,8 @@ const flappyBirdSprite = spriteBuilder
             ])
     )
     .canCollideWith(['pipeSet'])
-    .onCollision(collisionEvent => {
-        if (collisionEvent.otherSpriteTag === 'pipeSet') {
+    .onCollision((flappy, collisionEvent) => {
+        if (collisionEvent.otherSprite.tag === 'pipeSet') {
             if (collisionEvent.otherSpriteHitBoxKey === 'topPipeHitBox') {
             } else if (collisionEvent.otherSpriteHitBoxKey === 'goalHitBox') {
             } else if (collisionEvent.otherSpriteHitBoxKey === 'bottomPipe') {

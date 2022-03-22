@@ -15,14 +15,14 @@ export type HitBox2D = {
 
 export type CompositeHitBox2D = Map<string, HitBox2D>;
 
-export type SpriteCollisionResult2D = {
-    collisionDetected: boolean;
-    spriteTag: string;
-    spriteHitBoxKey?: string;
-    otherSpriteTag: string;
+export type SpriteCollisionEvent2D = {
+    hitBoxKey?: string;
     otherSpriteHitBoxKey?: string;
-    sprite: CanvasSprite2D;
     otherSprite: CanvasSprite2D;
+}
+
+type InternalSpriteCollisionEvent2D = SpriteCollisionEvent2D & {
+    collisionDetected: boolean;
 }
 
 export const addPositions = (position: Point2D, offset: Point2D): Point2D => {
@@ -38,12 +38,9 @@ export default class Physics {
         e.vy += g ?? Constants.G;
     }
 
-    private static collidingHelper = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D, shouldSetSpriteHitBoxKey: boolean = false): SpriteCollisionResult2D => {
-        const result: SpriteCollisionResult2D = {
+    private static collidingHelper = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D, shouldSetHitBoxKey: boolean = false): InternalSpriteCollisionEvent2D => {
+        const result: InternalSpriteCollisionEvent2D = {
             collisionDetected: false,
-            spriteTag: shouldSetSpriteHitBoxKey ? otherSprite.tag : sprite.tag,
-            otherSpriteTag: shouldSetSpriteHitBoxKey ? sprite.tag : otherSprite.tag,
-            sprite: sprite,
             otherSprite: otherSprite
         };
         for (let key of Array.from(otherSprite.compositeHitBox.keys())) {
@@ -57,8 +54,8 @@ export default class Physics {
                     )
                 ) {
                 result.collisionDetected = true;
-                if (shouldSetSpriteHitBoxKey) { 
-                    result.spriteHitBoxKey = key;
+                if (shouldSetHitBoxKey) { 
+                    result.hitBoxKey = key;
                 }
                 else {
                     result.otherSpriteHitBoxKey = key;
@@ -70,12 +67,9 @@ export default class Physics {
     }
 
     //not using correct hitbox positions, need to consider offsets lol
-    static colliding = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D): SpriteCollisionResult2D => {
-        let result: SpriteCollisionResult2D = {
+    static colliding = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D): InternalSpriteCollisionEvent2D => {
+        let result: InternalSpriteCollisionEvent2D = {
             collisionDetected: false,
-            spriteTag: sprite.tag,
-            otherSpriteTag: otherSprite.tag,
-            sprite: sprite,
             otherSprite: otherSprite
         };
         if (sprite.hitBox && otherSprite.hitBox) {
@@ -93,11 +87,8 @@ export default class Physics {
                     if (this.rectangleCollision(sprite.position, sprite.compositeHitBox.get(spriteKey), otherSprite.position, otherSprite.compositeHitBox.get(otherSpriteKey))) {
                         result = {
                             collisionDetected: true,
-                            spriteTag: sprite.tag,
-                            spriteHitBoxKey: spriteKey,
-                            otherSpriteTag: otherSprite.tag,
+                            hitBoxKey: spriteKey,
                             otherSpriteHitBoxKey: otherSpriteKey,
-                            sprite: sprite,
                             otherSprite: otherSprite
                         }
                         break;

@@ -1,7 +1,7 @@
 import CanvasSprite2D, { CanvasImageSourceWithOffset, RotationFunction } from "./CanvasSprite2D";
 import CanvasSprite2DComponent from "./CanvasSprite2DComponent";
 import CanvasSprite2DFrameAnimation from "./CanvasSprite2DFrameAnimation";
-import { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionResult2D } from "./Physics";
+import { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionEvent2D } from "./Physics";
 
 export default class CanvasSprite2DBuilder {
     private sprite: CanvasSprite2D;
@@ -101,7 +101,7 @@ export default class CanvasSprite2DBuilder {
         return this;
     }
 
-    onCollision = (handler: (collisionEvent: SpriteCollisionResult2D) => void) => {
+    onCollision = (handler: (sprite: CanvasSprite2D, collisionEvent: SpriteCollisionEvent2D) => void) => {
         this.sprite.collisionHandler = handler;
         return this;
     }
