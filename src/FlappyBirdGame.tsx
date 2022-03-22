@@ -11,12 +11,14 @@ import bottomPipeImageSrc from '../images/bottom_pipe.png';
 import React from 'react';
 import CanvasGame from './CanvasGame';
 import { HitBox2D } from './Physics';
-import CullAfterDurationComponent from './CullAfterDurationComponent';
+import CanvasSprite2DFactory from './CanvasSprite2DFactory';
+import CanvasSprite2DComponent from './CanvasSprite2DComponent';
+import CanvasSprite2D from './CanvasSprite2D';
 
 const spriteBuilder = new CanvasSprite2DBuilder();
 
 const flappyBirdSprite = spriteBuilder
-    .at({ x: 0, y: 200 })
+    .at({ x: 20, y: 200 })
     .withTag('flappyBird')
     .withGravity()
     .withHitBox({
@@ -63,10 +65,24 @@ const flappyBirdSprite = spriteBuilder
     })
     .build();
 
-class PipeSetFactory {
-    static newPipeSet = (spriteBuilder: CanvasSprite2DBuilder) => {
+const getRandomPipeHeight = () => -25 + Math.random() * 115;
+
+class PipePositionResetComponent extends CanvasSprite2DComponent {
+    update(sprite: CanvasSprite2D): void {
+        if (sprite.position.x < -400 - Constants.PIPE_WIDTH) {
+            sprite.position.x = 400;
+            sprite.position.y = getRandomPipeHeight();
+        }
+    }
+}
+
+class PipeSetFactory extends CanvasSprite2DFactory {
+    spawnAfterMs = (durationMs: number, sprites: Array<CanvasSprite2D>) =>
+        setTimeout(() => sprites.push(this.spawn()), durationMs);
+
+    spawn = () => {
         const x = 400;
-        const y = -25 + Math.random() * 115;
+        const y = getRandomPipeHeight();
         const topPipeHitBoxPosition = {
             x: x,
             y: y - Constants.PIPE_Y_OFFSET
@@ -102,7 +118,7 @@ class PipeSetFactory {
                         {
                             offset: topPipeHitBoxPosition,
                             height: Constants.PIPE_HEIGHT,
-                            width: 3
+                            width: Constants.PIPE_WIDTH
                         }
                     ],
                     [
@@ -118,22 +134,21 @@ class PipeSetFactory {
                         {
                             offset: bottomPipeHitBoxPosition,
                             height: Constants.PIPE_HEIGHT,
-                            width: 3
+                            width: Constants.PIPE_WIDTH
                         }
                     ]
                 ])
             )
-            .canCollideWith(['flappyBird'])
-            .addComponent(new CullAfterDurationComponent(4000))
+            .addComponent(new PipePositionResetComponent())
             .build();
     };
 }
 
+const pipeFactory = new PipeSetFactory(spriteBuilder);
 const sprites = [flappyBirdSprite];
-
-setInterval(() => {
-    sprites.push(PipeSetFactory.newPipeSet(spriteBuilder));
-}, 1000);
+pipeFactory.spawnAfterMs(0, sprites);
+pipeFactory.spawnAfterMs(950, sprites);
+pipeFactory.spawnAfterMs(1900, sprites);
 
 const FlappyBirdGame: React.FC = () => {
     return <CanvasGame sprites={sprites} debug={true}></CanvasGame>;
