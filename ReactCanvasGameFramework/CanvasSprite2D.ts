@@ -10,8 +10,8 @@ export type CanvasImageSourceWithOffset = {
     y?: number;
 }
 
-//TODO: maybe each CanvasSprite2D can have a useImperative ref to the CanvasGame
-//so that they can call CanvasGame.current.getSprites or CanvasGame.current.addSprites
+//TODO: CanvasSprite2D should have a reference to the sprites array
+//TODO: CanvasSprite2D should have an onInterval function in case users don't want vx/vy i.e. for snake
 export default class CanvasSprite2D implements IUpdateEveryFrame {
     tag: string;
     position: Point2D = {x: 0, y: 0};

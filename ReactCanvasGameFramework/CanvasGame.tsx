@@ -9,7 +9,6 @@ interface ICanvasGameProps {
     canvasHeight?: number;
 }
 
-//TODO: check out useImperativeHandle for making things callable if you wrap a canvas game and use it as a ref i.e. canvasGameRef.current.addSprite()
 const CanvasGame: React.FC<ICanvasGameProps> = (
     props: ICanvasGameProps
 ): JSX.Element => {
