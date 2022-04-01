@@ -1,6 +1,5 @@
 import CanvasSprite2DComponent from "./CanvasSprite2DComponent";
 import CanvasSprite2DFrameAnimation from "./CanvasSprite2DFrameAnimation";
-import Constants from "./Constants";
 import IUpdateEveryFrame from "./IUpdateEveryFrame";
 import Physics, { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionEvent2D } from "./Physics";
 
@@ -11,6 +10,8 @@ export type CanvasImageSourceWithOffset = {
     y?: number;
 }
 
+//TODO: maybe each CanvasSprite2D can have a useImperative ref to the CanvasGame
+//so that they can call CanvasGame.current.getSprites or CanvasGame.current.addSprites
 export default class CanvasSprite2D implements IUpdateEveryFrame {
     tag: string;
     position: Point2D = {x: 0, y: 0};
@@ -34,6 +35,8 @@ export default class CanvasSprite2D implements IUpdateEveryFrame {
     _collisionDetected = (collisionEvent: SpriteCollisionEvent2D) => {
         this.collisionHandler?.(this, collisionEvent);
     }
+
+    getComponentByKey = (key: string) => this.components.find(c => c.key === key);
 
     update = () => {
         this.onBeforeUpdate?.(this);

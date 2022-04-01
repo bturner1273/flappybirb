@@ -109,6 +109,7 @@ export default class CanvasSprite2DBuilder {
     build = (): CanvasSprite2D => {
         let returnSprite = this.sprite;
         this.sprite = new CanvasSprite2D();
+        this.sprite.shouldCull = false;
         return returnSprite;
     } 
 }

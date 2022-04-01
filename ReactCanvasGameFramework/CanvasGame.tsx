@@ -9,6 +9,7 @@ interface ICanvasGameProps {
     canvasHeight?: number;
 }
 
+//TODO: check out useImperativeHandle for making things callable if you wrap a canvas game and use it as a ref i.e. canvasGameRef.current.addSprite()
 const CanvasGame: React.FC<ICanvasGameProps> = (
     props: ICanvasGameProps
 ): JSX.Element => {
@@ -53,29 +54,26 @@ const CanvasGame: React.FC<ICanvasGameProps> = (
                 canvasRef.current.height
             );
 
-            sprites
-                /*TODO: need to figure out how to actually remove these extra entities*/
-                .filter(s => !s.shouldCull)
-                .forEach(s => {
-                    s.update();
-                    if (s.collidableTags) {
-                        sprites.forEach(_s => {
-                            if (s !== _s && s.collidableTags.includes(_s.tag)) {
-                                const collisionResult = Physics.colliding(
-                                    s,
-                                    _s
-                                );
-                                if (collisionResult.collisionDetected) {
-                                    s._collisionDetected(collisionResult);
-                                }
+            //remove all culled sprites
+            sprites = sprites.filter(s => s.shouldCull === false);
+
+            sprites.forEach(s => {
+                s.update();
+                if (s.collidableTags) {
+                    sprites.forEach(_s => {
+                        if (s !== _s && s.collidableTags.includes(_s.tag)) {
+                            const collisionResult = Physics.colliding(s, _s);
+                            if (collisionResult.collisionDetected) {
+                                s._collisionDetected(collisionResult);
                             }
-                        });
-                    }
-                    if (debug) {
-                        drawSpriteHitBox(s);
-                    }
-                    s.draw(context);
-                });
+                        }
+                    });
+                }
+                if (debug) {
+                    drawSpriteHitBox(s);
+                }
+                s.draw(context);
+            });
             requestAnimationFrame(gameLoop);
         };
         gameLoop();

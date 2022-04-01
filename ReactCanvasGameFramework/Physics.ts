@@ -1,4 +1,3 @@
-import Constants from "./Constants";
 import CanvasSprite2D from "./CanvasSprite2D";
 
 export type Point2D = {
@@ -31,11 +30,13 @@ export const addPositions = (position: Point2D, offset: Point2D): Point2D => {
 
 const defaultOffset: Point2D = {x: 0, y: 0};
 
+const G = 0.5;
+
 export default class Physics {
     static gravity = (e: CanvasSprite2D, g?: number): void => {
         if (e.vy === null || typeof e.vy === 'undefined') console.error('[Physics::gravity]: cannot call gravity on I2DCanvasEntity that does not have vy');
         e.position.y += e.vy;
-        e.vy += g ?? Constants.G;
+        e.vy += g ?? G;
     }
 
     private static collidingHelper = (sprite: CanvasSprite2D, otherSprite: CanvasSprite2D, shouldSetHitBoxKey: boolean = false): InternalSpriteCollisionEvent2D => {
