@@ -9,6 +9,7 @@
       "sourceMap": true,
       "outDir": "dist",
       "jsx": "react",
+      "target": "ES2015"
     },
     "include": [
         "src/", 

@@ -1,5 +1,6 @@
 import CanvasSprite2D from "./CanvasSprite2D";
-export default abstract class CanvasSprite2DComponent {
+import IUpdateEveryFrame from "./IUpdateEveryFrame";
+export default abstract class CanvasSprite2DComponent implements IUpdateEveryFrame {
     key: string;
     constructor(key: string) {
         this.key = key;

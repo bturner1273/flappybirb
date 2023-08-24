@@ -1,3 +1,3 @@
 export default interface IUpdateEveryFrame {
-    update: () => void;
+    update: (...args: Array<any>) => void;
 }

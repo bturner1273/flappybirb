@@ -7,23 +7,29 @@ interface ICanvasGameProps {
     debug?: boolean;
     canvasWidth?: number;
     canvasHeight?: number;
+    fps?: number;
 }
 
 const CanvasGame: React.FC<ICanvasGameProps> = (
-    props: ICanvasGameProps
+    {
+        sprites,
+        debug = false,
+        canvasWidth = 400,
+        canvasHeight = 400,
+        fps = 60
+    }: ICanvasGameProps
 ): JSX.Element => {
     const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
-    let context: CanvasRenderingContext2D;
-    let sprites: Array<CanvasSprite2D> = props.sprites;
-    const debug = props.debug ?? false;
 
-    const drawSpriteHitBox = (s: CanvasSprite2D): void => {
-        const drawSpriteHitBoxHelper = ({
-            offset,
-            height,
-            width,
-            drawColor
-        }: HitBox2D) => {
+    const drawSpriteHitBox = (s: CanvasSprite2D, context: CanvasRenderingContext2D): void => {
+        const drawSpriteHitBoxHelper = (
+            {
+                offset,
+                height,
+                width,
+                drawColor
+            }: HitBox2D 
+        ) => {
             drawColor = drawColor ?? 'red';
             context.strokeStyle = drawColor;
             context.strokeRect(
@@ -44,22 +50,30 @@ const CanvasGame: React.FC<ICanvasGameProps> = (
     };
 
     useEffect(() => {
-        context = canvasRef.current.getContext('2d');
+        const context = canvasRef.current.getContext('2d');
+
+        let prevFrameMs = 0;
+        let currentMs: number;
+        const fpsInterval = 1000 / fps;
+        const spritesClone = [...sprites];
+
+        canvasRef.current.addEventListener('keydown', e => sprites.forEach(s => s.onKeyDown?.(e.key, s)))
+        canvasRef.current.addEventListener('keyup', e => sprites.forEach(s => s.onKeyUp?.(e.key, s)))
+
         const gameLoop = () => {
-            context.clearRect(
-                0,
-                0,
-                canvasRef.current.width,
-                canvasRef.current.height
-            );
-
-            //remove all culled sprites
-            sprites = sprites.filter(s => s.shouldCull === false);
-
-            sprites.forEach(s => {
+            requestAnimationFrame(gameLoop);
+            //remove all culled sprites and run updates
+            spritesClone.reduce((acc, cur, i) => {
+                if (cur.shouldCull) {
+                    acc.push(i)
+                }
+                return acc;
+            }, []).forEach(i => sprites.splice(i, 1))
+            //physics
+            spritesClone.forEach(s => {
                 s.update();
                 if (s.collidableTags) {
-                    sprites.forEach(_s => {
+                    spritesClone.forEach(_s => {
                         if (s !== _s && s.collidableTags.includes(_s.tag)) {
                             const collisionResult = Physics.colliding(s, _s);
                             if (collisionResult.collisionDetected) {
@@ -68,24 +82,35 @@ const CanvasGame: React.FC<ICanvasGameProps> = (
                         }
                     });
                 }
-                if (debug) {
-                    drawSpriteHitBox(s);
-                }
-                s.draw(context);
-            });
-            requestAnimationFrame(gameLoop);
+            })
+            //draw
+            currentMs = Date.now();
+            const elapsed = currentMs - prevFrameMs;
+            if (elapsed >= fpsInterval) {
+                prevFrameMs = currentMs - (elapsed % fpsInterval);
+                context.clearRect(
+                    0,
+                    0,
+                    canvasRef.current.width,
+                    canvasRef.current.height
+                );
+                spritesClone.forEach(s => {
+                    if (debug) {
+                        drawSpriteHitBox(s, context);
+                    }
+                    s.draw(context);
+                });
+            }
         };
         gameLoop();
     });
 
     return (
-        <div>
-            <canvas
-                ref={canvasRef}
-                height={props.canvasHeight ?? 400}
-                width={props.canvasWidth ?? 400}
-            ></canvas>
-        </div>
+        <canvas
+            ref={canvasRef}
+            height={canvasHeight}
+            width={canvasWidth}
+        />
     );
 };
 export default CanvasGame;

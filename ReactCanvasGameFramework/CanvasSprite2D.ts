@@ -25,6 +25,9 @@ export default class CanvasSprite2D implements IUpdateEveryFrame {
     rotation?: RotationFunction;
     onBeforeUpdate?: (sprite: CanvasSprite2D) => void;
     onAfterUpdate?: (sprite: CanvasSprite2D) => void;
+    //TODO: we are basically passing 'this' here, any way around that with the builder?
+    onKeyDown?: (key: string, sprite: CanvasSprite2D) => void;
+    onKeyUp?: (key: string, sprite: CanvasSprite2D) => void;
     hasGravity: boolean = false;
     gravitationConstant?: number;
     components?: Array<CanvasSprite2DComponent>;

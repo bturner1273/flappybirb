@@ -19,13 +19,13 @@ const flappyBird = new CanvasSprite2DBuilder()
         height: Constants.FLAPPY_HEIGHT,
         width: 3
     })
-    .withCustomControlHooks(flappy => {
-        document.addEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                flappy.vy = Constants.FLAP_FORCE;
-            }
-        });
-    })
+    // .withCustomControlHooks(flappy => {
+    //     document.addEventListener('keydown', (e: KeyboardEvent) => {
+    //         if (e.code === 'Space' || e.code === 'ArrowUp') {
+    //             flappy.vy = Constants.FLAP_FORCE;
+    //         }
+    //     });
+    // })
     .withRotation(flappy =>
         MathUtils.rangeMap(flappy.vy, Constants.FLAP_FORCE, 20, -60, 60)
     )
@@ -45,14 +45,12 @@ const flappyBird = new CanvasSprite2DBuilder()
     )
     .canCollideWith(['pipeSet'])
     .onCollision((flappy, collisionEvent) => {
-        console.log(collisionEvent.otherSprite.getComponentByKey('PipePositionResetComponent'));
         if (collisionEvent.otherSprite.tag === 'pipeSet') {
             if (collisionEvent.otherSpriteHitBoxKey === 'topPipeHitBox') {
             } else if (collisionEvent.otherSpriteHitBoxKey === 'goalHitBox') {
-            } else if (collisionEvent.otherSpriteHitBoxKey === 'bottomPipe') {
+            } else if (collisionEvent.otherSpriteHitBoxKey === 'bottomPipeHitBox') {
             }
         }
-        console.log(collisionEvent);
     })
     .build();
 

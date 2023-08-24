@@ -14,11 +14,6 @@ export default class CanvasSprite2DBuilder {
         return this;
     }
     
-    withCustomControlHooks = (controlHooks: (sprite: CanvasSprite2D) => void) => {
-        controlHooks(this.sprite);
-        return this;
-    } 
-
     withImage = (image: CanvasImageSource) => {
         if (this.sprite.animation || this.sprite.compositeImage) throw new Error("Cannot add image to sprite with pre-existing animation/composite image");
         this.sprite.image = image;
@@ -78,6 +73,16 @@ export default class CanvasSprite2DBuilder {
 
     onAfterUpdate = (func: (sprite: CanvasSprite2D) => void) => {
         this.sprite.onAfterUpdate = func;
+        return this;
+    }
+
+    onKeyDown = (func: (key: string, sprite: CanvasSprite2D) => void) => {
+        this.sprite.onKeyDown = func;
+        return this;
+    }
+
+    onKeyUp = (func: (key: string, sprite: CanvasSprite2D) => void) => {
+        this.sprite.onKeyUp = func;
         return this;
     }
 

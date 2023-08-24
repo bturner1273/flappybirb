@@ -11,7 +11,7 @@ const getRandomPipeHeight = () => -25 + Math.random() * 115;
 
 class PipePositionResetComponent extends CanvasSprite2DComponent {
     constructor() {
-        super(PipePositionResetComponent.constructor.name);
+        super('PipePositionResetComponent')
     }
     update(sprite: CanvasSprite2D): void {
         if (sprite.position.x < -400 - Constants.PIPE_WIDTH) {

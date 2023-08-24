@@ -1,7 +1,8 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-    entry: { 'FlappyBirdNumberInput': './src/FlappyBirdNumberInput.tsx' },
+    entry: './src/index.tsx',
     module: {
         rules: [
             {
@@ -21,16 +22,17 @@ module.exports = {
 
     },
     output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, 'dist'),
-        publicPath: '/dist/',
-        library: {
-            name: '[name]',
-            type: 'umd'
-        },
+        filename: '[name].[contenthash].js',
+        path: path.resolve(__dirname, 'build'),
+        publicPath: '/',
         clean: true
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-    }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'FlappyBird Number Input'
+        })
+    ]
 };
