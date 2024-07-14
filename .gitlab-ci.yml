@@ -22,7 +22,7 @@ stages:
       - node_modules/
 
 prettierCheck:
-  stage: prettyCheck
+  stage: prettierCheck
   <<: *prettierCheck
 
 build:
