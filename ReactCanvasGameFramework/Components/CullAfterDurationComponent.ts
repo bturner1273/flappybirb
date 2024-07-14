@@ -1,5 +1,5 @@
-import CanvasSprite2D from "../CanvasSprite2D";
-import CanvasSprite2DComponent from "../CanvasSprite2DComponent";
+import CanvasSprite2D from '../CanvasSprite2D';
+import CanvasSprite2DComponent from '../CanvasSprite2DComponent';
 
 export default class CullAfterDurationComponent extends CanvasSprite2DComponent {
     startMs: number;

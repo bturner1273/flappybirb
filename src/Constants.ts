@@ -1,5 +1,5 @@
 export default class Constants {
-    static readonly FLAP_FORCE = -7.5;
+    static readonly FLAP_FORCE = -4;
     static readonly PIPE_SPEED = 5;
     static readonly PIPE_Y_OFFSET = 190;
     static readonly PIPE_WIDTH = 52;

@@ -1,23 +1,36 @@
-import CanvasSprite2DComponent from "./CanvasSprite2DComponent";
-import CanvasSprite2DFrameAnimation from "./CanvasSprite2DFrameAnimation";
-import IUpdateEveryFrame from "./IUpdateEveryFrame";
-import Physics, { CompositeHitBox2D, HitBox2D, Point2D, SpriteCollisionEvent2D } from "./Physics";
+import { ICanvasGameContext } from './CanvasGame';
+import CanvasSprite2DComponent from './CanvasSprite2DComponent';
+import CanvasSprite2DFrameAnimation from './CanvasSprite2DFrameAnimation';
+import IUpdateEveryFrame from './IUpdateEveryFrame';
+import Physics, {
+    CompositeHitBox2D,
+    HitBox2D,
+    Point2D,
+    SpriteCollisionEvent2D
+} from './Physics';
 
 export type RotationFunction = (sprite: CanvasSprite2D) => number;
 export type CanvasImageSourceWithOffset = {
     image: any;
     x?: number;
     y?: number;
-}
+};
+export type CanvasSprite2DTestDisplayConfiguration = {
+    text: string;
+    color: string;
+    fontSize: number;
+    font: string;
+};
 
 //TODO: CanvasSprite2D should have a reference to the sprites array
 //TODO: CanvasSprite2D should have an onInterval function in case users don't want vx/vy i.e. for snake
 export default class CanvasSprite2D implements IUpdateEveryFrame {
     tag: string;
-    position: Point2D = {x: 0, y: 0};
+    position: Point2D = { x: 0, y: 0 };
     image?: CanvasImageSource;
     compositeImage?: Array<CanvasImageSourceWithOffset>;
     animation?: CanvasSprite2DFrameAnimation;
+    textDisplayConfiguration?: CanvasSprite2DTestDisplayConfiguration;
     vx?: number;
     vy?: number;
     hitBox?: HitBox2D;
@@ -25,78 +38,96 @@ export default class CanvasSprite2D implements IUpdateEveryFrame {
     rotation?: RotationFunction;
     onBeforeUpdate?: (sprite: CanvasSprite2D) => void;
     onAfterUpdate?: (sprite: CanvasSprite2D) => void;
-    //TODO: we are basically passing 'this' here, any way around that with the builder?
     onKeyDown?: (key: string, sprite: CanvasSprite2D) => void;
     onKeyUp?: (key: string, sprite: CanvasSprite2D) => void;
-    hasGravity: boolean = false;
     gravitationConstant?: number;
     components?: Array<CanvasSprite2DComponent>;
     collidableTags?: Array<string>;
-    collisionHandler?: (sprite: CanvasSprite2D, collisionEvent: SpriteCollisionEvent2D) => void;
+    collisionHandler?: (
+        sprite: CanvasSprite2D,
+        collisionEvent: SpriteCollisionEvent2D
+    ) => void;
     shouldCull: boolean = false;
+    zIndex: number = 0;
+    gameContext?: ICanvasGameContext;
+    hidden: boolean = false;
+    showing: boolean = false;
 
     _collisionDetected = (collisionEvent: SpriteCollisionEvent2D) => {
         this.collisionHandler?.(this, collisionEvent);
-    }
+    };
 
-    getComponentByKey = (key: string) => this.components.find(c => c.key === key);
+    getComponentByKey = (key: string) =>
+        this.components.find(c => c.key === key);
 
     update = () => {
         this.onBeforeUpdate?.(this);
-        
-        //handle custom components
+
+        //update custom components
         if (this.components) {
             this.components.forEach(component => {
                 component.update(this);
-            })
+            });
         }
 
-        //update sprite position
-        if (this.hasGravity) {
+        //update sprite positions
+        if (this.gravitationConstant) {
             Physics.gravity(this, this.gravitationConstant);
-        }
-        else if (!this.hasGravity && this.vy) {
+        } else if (!this.gravitationConstant && this.vy) {
             this.position.y += this.vy;
         }
         if (this.vx) {
             this.position.x += this.vx;
         }
 
-        //handle animation/regular image display
-        if (this.animation) { 
+        //update animations
+        if (this.animation) {
             this.animation.update();
         }
-        
+
         this.onAfterUpdate?.(this);
     };
 
     draw = (context: CanvasRenderingContext2D) => {
         const _drawHelper = () => {
             if (this.animation) {
-                context.drawImage(this.animation.getView(), this.position.x, this.position.y);
-            }
-            else if (this.image) {
+                context.drawImage(
+                    this.animation.getView(),
+                    this.position.x,
+                    this.position.y
+                );
+            } else if (this.image) {
                 context.drawImage(this.image, this.position.x, this.position.y);
-            }
-            else if (this.compositeImage) {
+            } else if (this.compositeImage) {
                 this.compositeImage.forEach(img => {
-                    context.drawImage(img.image, this.position.x + (img.x ?? 0), this.position.y + (img.y ?? 0));
+                    context.drawImage(
+                        img.image,
+                        this.position.x + (img.x ?? 0),
+                        this.position.y + (img.y ?? 0)
+                    );
                 });
+            } else if (this.textDisplayConfiguration) {
+                context.fillStyle = this.textDisplayConfiguration.color;
+                context.font = `${this.textDisplayConfiguration.fontSize}px ${this.textDisplayConfiguration.font}`;
+                context.fillText(
+                    this.textDisplayConfiguration.text,
+                    this.position.x,
+                    this.position.y
+                );
             }
-        }
+        };
 
         if (this.rotation) {
             context.save();
             context.translate(this.position.x, this.position.y);
-            context.rotate(this.rotation(this) * (Math.PI / 180.0))
+            context.rotate(this.rotation(this) * (Math.PI / 180.0));
             context.translate(-this.position.x, -this.position.y);
             _drawHelper();
             context.restore();
-        }
-        else {
+        } else {
             _drawHelper();
         }
     };
 
-    kill = () => this.shouldCull = true;
+    kill = () => (this.shouldCull = true);
 }
