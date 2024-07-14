@@ -7,7 +7,7 @@ module.exports = {
         rules: [
             {
                 test: /\.(png|jpg|jpeg|gif)$/i,
-                type: "asset/resource",
+                type: 'asset/resource'
             },
             {
                 test: /\.tsx?$/,
@@ -18,8 +18,7 @@ module.exports = {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader']
             }
-        ],
-
+        ]
     },
     output: {
         filename: '[name].[contenthash].js',
@@ -28,11 +27,12 @@ module.exports = {
         clean: true
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'FlappyBird Number Input'
+            title: 'FlappyBird Number Input',
+            template: 'public/template.html'
         })
     ]
 };

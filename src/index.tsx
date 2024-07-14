@@ -1,15 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
     FlappyBirdNumberInput,
     IFlappyBirdNumberInputProps
 } from './FlappyBirdNumberInput';
 
-const render = (props?: IFlappyBirdNumberInputProps) =>
-    ReactDOM.render(
-        <FlappyBirdNumberInput {...props} />,
-        document.getElementsByTagName('body')[0]
-    );
+const render = (props?: IFlappyBirdNumberInputProps) => {
+    const root = createRoot(document.getElementById('root'));
+    root.render(<FlappyBirdNumberInput {...props} />);
+};
 render();
 //Webpack HMR
 //@ts-ignore
