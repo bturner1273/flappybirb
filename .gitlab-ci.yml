@@ -21,6 +21,10 @@ stages:
     paths:
       - node_modules/
 
+# this should really be a git hook
+# nobody wants their pipeline failing
+# on a prettier/lint check with a command
+# line fix
 prettierCheck:
   stage: prettierCheck
   <<: *prettierCheck
