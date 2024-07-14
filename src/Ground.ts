@@ -2,11 +2,13 @@ import CanvasSprite2DBuilder from '../ReactCanvasGameFramework/CanvasSprite2DBui
 import { LeftMovingPositionResetComponent } from '../ReactCanvasGameFramework/Components/LeftMovingPositionResetComponent';
 import { imageLoad } from '../ReactCanvasGameFramework/ImageHelpers';
 import groundImageSrc from '../images/ground.png';
+import Constants from './Constants';
+
 const groundImage = imageLoad(groundImageSrc)[0];
 const ground = new CanvasSprite2DBuilder()
-    .at({ x: 0, y: 400 - groundImage.height })
-    .withTag('ground')
-    .withZIndex(1)
+    .at({ x: 0, y: Constants.CANVAS_HEIGHT - groundImage.height })
+    .withTag(Constants.GROUND_TAG)
+    .withZIndex(Constants.GROUND_Z)
     .withCompositeImage([
         {
             image: groundImage,

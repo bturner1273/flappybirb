@@ -2,11 +2,13 @@ import React, { KeyboardEventHandler, useEffect, useRef } from 'react';
 import CanvasSprite2D from './CanvasSprite2D';
 import Physics, { HitBox2D } from './Physics';
 
-interface ICanvasGameProps {
+export interface ICanvasGameProps
+    extends React.DetailedHTMLProps<
+        React.CanvasHTMLAttributes<HTMLCanvasElement>,
+        HTMLCanvasElement
+    > {
     sprites: Array<CanvasSprite2D>;
     debug?: boolean;
-    canvasWidth?: number;
-    canvasHeight?: number;
     fps?: number;
     onGameOver?: (ctx: ICanvasGameContext) => void;
 }
@@ -50,10 +52,9 @@ const drawSpriteHitBox = (
 const CanvasGame: React.FC<ICanvasGameProps> = ({
     sprites: initialSprites,
     debug = false,
-    canvasWidth = 400,
-    canvasHeight = 400,
     fps = 60,
-    onGameOver
+    onGameOver,
+    ...canvasProps
 }: ICanvasGameProps): JSX.Element => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const running = useRef(true);
@@ -151,14 +152,9 @@ const CanvasGame: React.FC<ICanvasGameProps> = ({
 
     return (
         <canvas
+            {...canvasProps}
             ref={canvasRef}
             tabIndex={0}
-            style={{
-                border: 'none',
-                outline: 'none'
-            }}
-            height={canvasHeight}
-            width={canvasWidth}
             onKeyDown={onKeyDown}
             onKeyUp={onKeyUp}
         />

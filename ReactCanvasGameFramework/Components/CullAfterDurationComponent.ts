@@ -4,8 +4,9 @@ import CanvasSprite2DComponent from '../CanvasSprite2DComponent';
 export default class CullAfterDurationComponent extends CanvasSprite2DComponent {
     startMs: number;
     durationMs: number;
+    static key = 'CullAfterDurationComponent';
     constructor(durationMs: number) {
-        super(CullAfterDurationComponent.constructor.name);
+        super(CullAfterDurationComponent.key);
         this.startMs = Date.now();
         this.durationMs = durationMs;
     }

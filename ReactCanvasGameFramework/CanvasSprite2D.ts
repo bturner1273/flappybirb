@@ -57,8 +57,8 @@ export default class CanvasSprite2D implements IUpdateEveryFrame {
         this.collisionHandler?.(this, collisionEvent);
     };
 
-    getComponentByKey = (key: string) =>
-        this.components.find(c => c.key === key);
+    getComponentByKey = <T>(key: string) =>
+        this.components.find(c => c.key === key) as unknown as T | undefined;
 
     update = () => {
         this.onBeforeUpdate?.(this);

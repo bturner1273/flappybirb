@@ -3,8 +3,9 @@ import CanvasSprite2DComponent from '../CanvasSprite2DComponent';
 
 export class MutateHiddenComponent extends CanvasSprite2DComponent {
     hidden: boolean;
+    static key = 'MutateHiddenComponent';
     constructor(initialHiddenState = true) {
-        super('MutateHiddenComponent');
+        super(MutateHiddenComponent.key);
         this.hidden = initialHiddenState;
     }
     setHidden(hidden: boolean) {

@@ -10,13 +10,13 @@ import { MutateHiddenComponent } from '../ReactCanvasGameFramework/Components/Mu
 import { ScoreTrackingComponent } from './Score';
 
 const flappyBird = new CanvasSprite2DBuilder()
-    .at({ x: 20, y: 200 })
-    .withTag('flappyBird')
-    .withZIndex(2)
+    .at({ x: 20, y: Constants.CANVAS_HEIGHT / 2 })
+    .withTag(Constants.FLAPPY_TAG)
+    .withZIndex(Constants.FLAPPY_Z)
     .withGravity(0.2)
     .withHitBox({
         offset: {
-            x: Constants.FLAPPY_WIDTH - Constants.PIPE_SPEED,
+            x: Constants.FLAPPY_WIDTH - 5,
             y: 0
         },
         height: Constants.FLAPPY_HEIGHT,
@@ -44,36 +44,38 @@ const flappyBird = new CanvasSprite2DBuilder()
                 }
             ])
     )
-    .canCollideWith(['pipeSet', 'ground'])
+    .canCollideWith([Constants.PIPE_TAG, Constants.GROUND_TAG])
     .onCollision((flappy, collisionEvent) => {
         if (
-            ((collisionEvent.otherSprite.tag === 'pipeSet' &&
-                (collisionEvent.otherSpriteHitBoxKey === 'topPipeHitBox' ||
+            ((collisionEvent.otherSprite.tag === Constants.PIPE_TAG &&
+                (collisionEvent.otherSpriteHitBoxKey ===
+                    Constants.TOP_PIPE_HITBOX_KEY ||
                     collisionEvent.otherSpriteHitBoxKey ===
-                        'bottomPipeHitBox')) ||
-                collisionEvent.otherSprite.tag === 'ground') &&
+                        Constants.BOTTOM_PIPE_HITBOX_KEY)) ||
+                collisionEvent.otherSprite.tag === Constants.GROUND_TAG) &&
             flappy.gameContext
         ) {
             const gameOver = flappy.gameContext.sprites.find(
-                sprite => sprite.tag === 'gameOver'
+                sprite => sprite.tag === Constants.GAME_OVER_TAG
             );
-            const gameOverHiddenMutator = gameOver?.components.find(
-                component => component.key === 'MutateHiddenComponent'
-            ) as MutateHiddenComponent;
+            const gameOverHiddenMutator =
+                gameOver?.getComponentByKey<MutateHiddenComponent>(
+                    MutateHiddenComponent.key
+                );
             gameOverHiddenMutator?.setHidden(false);
         } else if (
-            collisionEvent.otherSprite.tag === 'pipeSet' &&
-            collisionEvent.otherSpriteHitBoxKey === 'goalHitBox'
+            collisionEvent.otherSprite.tag === Constants.PIPE_TAG &&
+            collisionEvent.otherSpriteHitBoxKey === Constants.GOAL_HITBOX_KEY
         ) {
             const score = flappy.gameContext?.sprites.find(
-                sprite => sprite.tag === 'score'
+                sprite => sprite.tag === Constants.SCORE_TAG
             );
-            const scoreComponent = score?.components.find(
-                component => component.key === 'ScoreTrackingComponent'
-            ) as ScoreTrackingComponent;
+            const scoreComponent =
+                score?.getComponentByKey<ScoreTrackingComponent>(
+                    ScoreTrackingComponent.key
+                );
             scoreComponent?.increment();
         }
     })
     .build();
-
 export default flappyBird;

@@ -1,18 +1,15 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-    FlappyBirdNumberInput,
-    IFlappyBirdNumberInputProps
-} from './FlappyBirdNumberInput';
+import FlappyBirdGame from './FlappyBirdGame';
 
-const render = (props?: IFlappyBirdNumberInputProps) => {
+const render = () => {
     const root = createRoot(document.getElementById('root'));
-    root.render(<FlappyBirdNumberInput {...props} />);
+    root.render(<FlappyBirdGame />);
 };
 render();
 //Webpack HMR
 //@ts-ignore
 if (module.hot) {
     //@ts-ignore
-    module.hot.accept('./FlappyBirdNumberInput.tsx', render);
+    module.hot.accept('./FlappyBirdGame.tsx', render);
 }

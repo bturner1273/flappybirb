@@ -3,8 +3,9 @@ import CanvasSprite2DComponent from '../CanvasSprite2DComponent';
 
 export class LeftMovingPositionResetComponent extends CanvasSprite2DComponent {
     individualImageWidth: number;
+    static key = 'LeftMovingPositionResetComponent';
     constructor(individualImageWidth: number) {
-        super('BackgroundPositionResetComponent');
+        super(LeftMovingPositionResetComponent.key);
         this.individualImageWidth = individualImageWidth;
     }
     update(sprite: CanvasSprite2D): void {

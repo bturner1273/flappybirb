@@ -1,10 +1,27 @@
 export default class Constants {
     static readonly FLAP_FORCE = -4;
-    static readonly PIPE_SPEED = 5;
+    static readonly PIPE_VELOCITY_X = -3;
     static readonly PIPE_Y_OFFSET = 190;
     static readonly PIPE_WIDTH = 52;
     static readonly PIPE_HEIGHT = 266;
     static readonly FLAPPY_WIDTH = 32;
     static readonly FLAPPY_HEIGHT = 24;
     static readonly GOAL_HEIGHT = 115;
+    static readonly CANVAS_WIDTH = 400;
+    static readonly CANVAS_HEIGHT = 400;
+    static readonly BACKGROUND_Z = 0;
+    static readonly PIPE_Z = 1;
+    static readonly GROUND_Z = 2;
+    static readonly FLAPPY_Z = 3;
+    static readonly GAME_OVER_Z = 4;
+    static readonly SCORE_Z = 5;
+    static readonly BACKGROUND_TAG = 'parallaxBackground';
+    static readonly PIPE_TAG = 'pipeSet';
+    static readonly GROUND_TAG = 'ground';
+    static readonly FLAPPY_TAG = 'flappyBird';
+    static readonly GAME_OVER_TAG = 'gameOver';
+    static readonly SCORE_TAG = 'score';
+    static readonly TOP_PIPE_HITBOX_KEY = 'topPipeHitBox';
+    static readonly GOAL_HITBOX_KEY = 'goalHitBox';
+    static readonly BOTTOM_PIPE_HITBOX_KEY = 'bottomPipeHitBox';
 }

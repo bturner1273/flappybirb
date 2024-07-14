@@ -4,12 +4,13 @@ import CanvasSprite2DComponent from '../ReactCanvasGameFramework/CanvasSprite2DC
 import { LeftMovingPositionResetComponent } from '../ReactCanvasGameFramework/Components/LeftMovingPositionResetComponent';
 import { imageLoad } from '../ReactCanvasGameFramework/ImageHelpers';
 import backgroundImageSrc from '../images/background.png';
+import Constants from './Constants';
 
 const backgroundImage = imageLoad(backgroundImageSrc)[0];
 const parallaxBackground = new CanvasSprite2DBuilder()
     .at({ x: 0, y: 0 })
-    .withTag('parallaxBackground')
-    .withZIndex(0)
+    .withTag(Constants.BACKGROUND_TAG)
+    .withZIndex(Constants.BACKGROUND_Z)
     .withCompositeImage([
         {
             image: backgroundImage,

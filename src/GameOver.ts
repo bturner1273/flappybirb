@@ -4,10 +4,12 @@ import CanvasSprite2DBuilder from '../ReactCanvasGameFramework/CanvasSprite2DBui
 import CanvasSprite2DComponent from '../ReactCanvasGameFramework/CanvasSprite2DComponent';
 import { MutateHiddenComponent } from '../ReactCanvasGameFramework/Components/MutateHiddenComponent';
 import { imageLoad } from '../ReactCanvasGameFramework/ImageHelpers';
+import Constants from './Constants';
 
 export class StopGameLoopOnShowComponent extends CanvasSprite2DComponent {
+    static key = 'StopGameLoopOnShowComponent';
     constructor() {
-        super('StopGameLoopOnShowComponent');
+        super(StopGameLoopOnShowComponent.key);
     }
     update(sprite: CanvasSprite2D): void {
         if (sprite.showing) {
@@ -18,9 +20,12 @@ export class StopGameLoopOnShowComponent extends CanvasSprite2DComponent {
 
 const gameOverImage = imageLoad(gameOverSrc)[0];
 const gameOver = new CanvasSprite2DBuilder()
-    .at({ x: 200 - gameOverImage.width / 2, y: 200 - gameOverImage.height / 2 })
-    .withTag('gameOver')
-    .withZIndex(3)
+    .at({
+        x: Constants.CANVAS_WIDTH / 2 - gameOverImage.width / 2,
+        y: Constants.CANVAS_HEIGHT / 2 - gameOverImage.height / 2
+    })
+    .withTag(Constants.GAME_OVER_TAG)
+    .withZIndex(Constants.GAME_OVER_Z)
     .withImage(gameOverImage)
     .addComponent(new MutateHiddenComponent())
     .addComponent(new StopGameLoopOnShowComponent())

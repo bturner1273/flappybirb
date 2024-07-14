@@ -5,13 +5,28 @@ import flappyBird from './FlappyBird';
 import parallaxBackground from './ParallaxBackground';
 import ground from './Ground';
 import gameOver from './GameOver';
-import Score from './Score';
+import score from './Score';
+import Constants from './Constants';
 
-const sprites = [];
-const score = new Score();
-sprites.push(parallaxBackground, ground, flappyBird, pipeSet, gameOver, score);
-
-const FlappyBirdGame: React.FC = () => (
-    <CanvasGame sprites={sprites} debug={false} fps={60} />
-);
-export default FlappyBirdGame;
+const sprites = [
+    parallaxBackground,
+    ground,
+    flappyBird,
+    pipeSet,
+    gameOver,
+    score
+];
+export default function FlappyBirdGame() {
+    return (
+        <CanvasGame
+            sprites={sprites}
+            height={Constants.CANVAS_HEIGHT}
+            width={Constants.CANVAS_WIDTH}
+            style={{
+                border: '2px solid black',
+                borderRadius: '5px',
+                outline: 'none'
+            }}
+        />
+    );
+}

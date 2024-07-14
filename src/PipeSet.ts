@@ -8,21 +8,24 @@ import bottomPipeImageSrc from '../images/bottom_pipe.png';
 import CanvasSprite2DBuilder from '../ReactCanvasGameFramework/CanvasSprite2DBuilder';
 import MathUtils from '../ReactCanvasGameFramework/MathUtils';
 
-const getRandomPipeHeight = () => MathUtils.getRandomNumber(-40, 65);
-
+const getRandomPipeHeight = () => MathUtils.getRandomNumber(-35, 75);
 class PipePositionResetComponent extends CanvasSprite2DComponent {
+    static key = 'PipePositionResetComponent';
     constructor() {
-        super('PipePositionResetComponent');
+        super(PipePositionResetComponent.key);
     }
     update(sprite: CanvasSprite2D): void {
-        if (sprite.position.x < -400 - Constants.PIPE_WIDTH) {
-            sprite.position.x = 400;
+        if (
+            sprite.position.x <
+            -Constants.CANVAS_WIDTH - Constants.PIPE_WIDTH
+        ) {
+            sprite.position.x = Constants.CANVAS_WIDTH;
             sprite.position.y = getRandomPipeHeight();
         }
     }
 }
 
-const x = 400;
+const x = Constants.CANVAS_WIDTH;
 const y = getRandomPipeHeight();
 const topPipeHitBoxPosition = {
     x: x,
@@ -37,9 +40,10 @@ const bottomPipeHitBoxPosition = {
     y: y + Constants.PIPE_Y_OFFSET
 };
 const pipeSet = new CanvasSprite2DBuilder()
-    .withTag('pipeSet')
-    .at({ x: x, y: y })
-    .withXVelocity(-3)
+    .at({ x, y })
+    .withTag(Constants.PIPE_TAG)
+    .withZIndex(Constants.PIPE_Z)
+    .withXVelocity(Constants.PIPE_VELOCITY_X)
     .withCompositeImage([
         {
             image: imageLoad(topPipeImageSrc)[0],
@@ -55,7 +59,7 @@ const pipeSet = new CanvasSprite2DBuilder()
     .withCompositeHitBox(
         new Map<string, HitBox2D>([
             [
-                'topPipeHitBox',
+                Constants.TOP_PIPE_HITBOX_KEY,
                 {
                     offset: topPipeHitBoxPosition,
                     height: Constants.PIPE_HEIGHT,
@@ -63,7 +67,7 @@ const pipeSet = new CanvasSprite2DBuilder()
                 }
             ],
             [
-                'goalHitBox',
+                Constants.GOAL_HITBOX_KEY,
                 {
                     offset: goalHitBoxPosition,
                     height: Constants.GOAL_HEIGHT,
@@ -71,7 +75,7 @@ const pipeSet = new CanvasSprite2DBuilder()
                 }
             ],
             [
-                'bottomPipeHitBox',
+                Constants.BOTTOM_PIPE_HITBOX_KEY,
                 {
                     offset: bottomPipeHitBoxPosition,
                     height: Constants.PIPE_HEIGHT,
