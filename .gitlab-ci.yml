@@ -1,0 +1,30 @@
+stages:
+  - prettierCheck
+  - build
+
+.prettierCheck: &prettierCheck
+  image: node:latest
+  script:
+    - npm install
+    - npm run prettier:check
+  cache:
+    paths:
+      - node_modules/
+
+.build: &build
+  image: node:latest
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  cache:
+    paths:
+      - node_modules/
+
+prettierCheck:
+  stage: prettyCheck
+  <<: *checkPrettiness
+
+build:
+  stage: build
+  <<: *build
