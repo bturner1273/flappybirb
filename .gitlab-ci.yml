@@ -23,7 +23,7 @@ stages:
 
 prettierCheck:
   stage: prettyCheck
-  <<: *checkPrettiness
+  <<: *prettierCheck
 
 build:
   stage: build
