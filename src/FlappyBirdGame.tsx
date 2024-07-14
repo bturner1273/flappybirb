@@ -1,19 +1,19 @@
 import React from 'react';
 import CanvasGame from '../ReactCanvasGameFramework/CanvasGame';
-import pipeSet from './PipeSet';
-import flappyBird from './FlappyBird';
-import parallaxBackground from './ParallaxBackground';
-import ground from './Ground';
-import gameOver from './GameOver';
+import getPipeSet from './PipeSet';
+import getFlappyBird from './FlappyBird';
+import getParallaxBackground from './ParallaxBackground';
+import getGround from './Ground';
+import getGameOver from './GameOver';
 import score from './Score';
 import Constants from './Constants';
 
 const sprites = [
-    parallaxBackground,
-    ground,
-    flappyBird,
-    pipeSet,
-    gameOver,
+    await getParallaxBackground(),
+    await getGround(),
+    await getFlappyBird(),
+    await getPipeSet(),
+    await getGameOver(),
     score
 ];
 export default function FlappyBirdGame() {

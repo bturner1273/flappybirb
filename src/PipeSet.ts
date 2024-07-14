@@ -1,6 +1,6 @@
 import CanvasSprite2D from '../ReactCanvasGameFramework/CanvasSprite2D';
 import CanvasSprite2DComponent from '../ReactCanvasGameFramework/CanvasSprite2DComponent';
-import { imageLoad } from '../ReactCanvasGameFramework/ImageHelpers';
+import { loadImages } from '../ReactCanvasGameFramework/ImageHelpers';
 import { HitBox2D } from '../ReactCanvasGameFramework/Physics';
 import Constants from './Constants';
 import topPipeImageSrc from '../images/top_pipe.png';
@@ -39,51 +39,57 @@ const bottomPipeHitBoxPosition = {
     x: x,
     y: y + Constants.PIPE_Y_OFFSET
 };
-const pipeSet = new CanvasSprite2DBuilder()
-    .at({ x, y })
-    .withTag(Constants.PIPE_TAG)
-    .withZIndex(Constants.PIPE_Z)
-    .withXVelocity(Constants.PIPE_VELOCITY_X)
-    .withCompositeImage([
-        {
-            image: imageLoad(topPipeImageSrc)[0],
-            x: x,
-            y: y + Constants.PIPE_Y_OFFSET
-        },
-        {
-            image: imageLoad(bottomPipeImageSrc)[0],
-            x: x,
-            y: y - Constants.PIPE_Y_OFFSET
-        }
-    ])
-    .withCompositeHitBox(
-        new Map<string, HitBox2D>([
-            [
-                Constants.TOP_PIPE_HITBOX_KEY,
-                {
-                    offset: topPipeHitBoxPosition,
-                    height: Constants.PIPE_HEIGHT,
-                    width: Constants.PIPE_WIDTH
-                }
-            ],
-            [
-                Constants.GOAL_HITBOX_KEY,
-                {
-                    offset: goalHitBoxPosition,
-                    height: Constants.GOAL_HEIGHT,
-                    width: 3
-                }
-            ],
-            [
-                Constants.BOTTOM_PIPE_HITBOX_KEY,
-                {
-                    offset: bottomPipeHitBoxPosition,
-                    height: Constants.PIPE_HEIGHT,
-                    width: Constants.PIPE_WIDTH
-                }
-            ]
+
+export default async function getPipeSet() {
+    const [topPipeImage, bottomPipeImage] = await loadImages(
+        topPipeImageSrc,
+        bottomPipeImageSrc
+    );
+    return new CanvasSprite2DBuilder()
+        .at({ x, y })
+        .withTag(Constants.PIPE_TAG)
+        .withZIndex(Constants.PIPE_Z)
+        .withXVelocity(Constants.PIPE_VELOCITY_X)
+        .withCompositeImage([
+            {
+                image: topPipeImage,
+                x: x,
+                y: y + Constants.PIPE_Y_OFFSET
+            },
+            {
+                image: bottomPipeImage,
+                x: x,
+                y: y - Constants.PIPE_Y_OFFSET
+            }
         ])
-    )
-    .addComponent(new PipePositionResetComponent())
-    .build();
-export default pipeSet;
+        .withCompositeHitBox(
+            new Map<string, HitBox2D>([
+                [
+                    Constants.TOP_PIPE_HITBOX_KEY,
+                    {
+                        offset: topPipeHitBoxPosition,
+                        height: Constants.PIPE_HEIGHT,
+                        width: Constants.PIPE_WIDTH
+                    }
+                ],
+                [
+                    Constants.GOAL_HITBOX_KEY,
+                    {
+                        offset: goalHitBoxPosition,
+                        height: Constants.GOAL_HEIGHT,
+                        width: 3
+                    }
+                ],
+                [
+                    Constants.BOTTOM_PIPE_HITBOX_KEY,
+                    {
+                        offset: bottomPipeHitBoxPosition,
+                        height: Constants.PIPE_HEIGHT,
+                        width: Constants.PIPE_WIDTH
+                    }
+                ]
+            ])
+        )
+        .addComponent(new PipePositionResetComponent())
+        .build();
+}

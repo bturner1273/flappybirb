@@ -1,19 +1,19 @@
 {
     "compilerOptions": {
-      "module": "es6",
-      "moduleResolution": "node",
-      "noImplicitAny": false,
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "allowSyntheticDefaultImports": true,
-      "sourceMap": true,
-      "outDir": "dist",
-      "jsx": "react",
-      "target": "ES2015"
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "outDir": "dist",
+        "jsx": "react",
+        "target": "ES2017"
     },
     "include": [
-        "src/", 
-        "ReactCanvasGameFramework/Components", 
-        "ReactCanvasGameFramework"    
+        "src/",
+        "ReactCanvasGameFramework/Components",
+        "ReactCanvasGameFramework"
     ]
-  }
+}
