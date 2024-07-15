@@ -11,7 +11,7 @@ import Physics, {
 
 export type RotationFunction = (sprite: CanvasSprite2D) => number;
 export type CanvasImageSourceWithOffset = {
-    image: any;
+    image: CanvasImageSource;
     x?: number;
     y?: number;
 };
