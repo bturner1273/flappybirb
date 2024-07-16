@@ -48,10 +48,8 @@ export default class CanvasSprite2DFrameAnimation implements IUpdateEveryFrame {
             this.animationIntervalMs
         ) {
             this.currentAnimationFrameIndex =
-                this.currentAnimationFrameIndex <
-                this.activeFrameAnimationCondition.images.length - 1
-                    ? this.currentAnimationFrameIndex + 1
-                    : 0;
+                (this.currentAnimationFrameIndex + 1) %
+                this.activeFrameAnimationCondition.images.length;
             this.previousAnimationUpdateMs = Date.now();
         }
     };
