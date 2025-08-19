@@ -1,3 +1,5 @@
+## Inspiration for repo: [pure-ecs](https://github.com/bturner1273/pure-ecs)
+
 # Run Steps
 
 -   clone repo
